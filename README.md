@@ -79,13 +79,13 @@ dou() {
   
   env | grep AWS_ > /tmp/aws-temp-creds 
 
+  docker_interactivity_flags="-i"
+  
   if [ "$@" = "bash" ] ||
     [ "$@" = "/bin/bash" ] ||
     [ "$@" = "sh" ] ||
     [ "$@" = "/bin/sh" ]; then
-    docker_interactivity_flags="-it"
-  else
-    docker_interactivity_flags="-i"
+    docker_interactivity_flags="-it" 
   fi
   
   docker run --rm ${docker_interactivity_flags} \
