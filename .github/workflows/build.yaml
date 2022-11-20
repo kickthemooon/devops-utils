@@ -1,0 +1,24 @@
+name: build
+
+env:
+  BUILD_NUMBER: ${{github.run_number}}
+  DOCKER_USER: kickthemooon
+  DOCKER_REPOSITORY: utils
+
+on:
+  push:
+    branches:
+      - master
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: build
+        run: |
+          docker login -u ${DOCKER_USER} -p "${{ secrets.DOCKER_HUB }}"
+          docker build -t "${DOCKER_USER}/${DOCKER_REPOSITORY}:${BUILD_NUMBER}" \
+            -t "${DOCKER_USER}/${DOCKER_REPOSITORY}:latest" . 
+          docker push "${DOCKER_USER}/${DOCKER_REPOSITORY}:${BUILD_NUMBER}"
