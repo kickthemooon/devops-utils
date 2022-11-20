@@ -16,7 +16,7 @@ Versions are defined as ARG's in the Dockerfile
 ### AWS CLI
 - Pass AWS credentials via the .aws directory
 ```
-_> docker run --rm -it \
+_> docker run --rm -i \
      -v "$(pwd):/workspace" \
      -v "${HOME}/.aws:/root/.aws" \
      kickthemooon/utils \
@@ -25,7 +25,7 @@ _> docker run --rm -it \
 - Pass temporary AWS credentials as env variables
 ```
 _> env | grep AWS_ > /tmp/aws-temp-creds && \
-   docker run --rm -it \
+   docker run --rm -i \
      -v "$(pwd):/workspace" \
      --env-file="/tmp/aws-temp-creds" \
      kickthemooon/utils \
@@ -35,7 +35,7 @@ _> env | grep AWS_ > /tmp/aws-temp-creds && \
 ### Kubectl
 - Pass a kubernetes configuration via .kube
 ```
-_> docker run --rm -it \
+_> docker run --rm -i \
      -v "$(pwd):/workspace" \
      -v "${HOME}/.kube:/root/.kube" \
      kickthemooon/utils \
@@ -43,7 +43,7 @@ _> docker run --rm -it \
 ```
 - Specify a kube config file
 ```
-_> KUBECONFIG="$HOME/.kube/my-kube-config-file" docker run --rm -it \
+_> KUBECONFIG="$HOME/.kube/my-kube-config-file" docker run --rm -i \
      -v "$(pwd):/workspace" \
      -v "${HOME}/.kube:/root/.kube" \
      -e "KUBECONFIG=${KUBECONFIG/$HOME/\/root}" \
@@ -54,7 +54,7 @@ _> KUBECONFIG="$HOME/.kube/my-kube-config-file" docker run --rm -it \
 ### Helm, JQ and YQ
 Helm, JQ and YQ are ready to use without any configuration e.g.:
 ```
-docker run --rm -it kickthemooon/utils jq
+docker run --rm -i kickthemooon/utils jq
 ```
 
 ## Add a shortcut
@@ -79,7 +79,7 @@ dou() {
   
   env | grep AWS_ > /tmp/aws-temp-creds 
   
-  docker run --rm -it \
+  docker run --rm -i \
     --env-file="/tmp/aws-temp-creds" \
     -v "${HOME}/.kube:/root/.kube" \
     -e "KUBECONFIG=${KUBECONFIG/$HOME/\/root}" \
