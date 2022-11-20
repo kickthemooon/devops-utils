@@ -22,3 +22,4 @@ jobs:
           docker build -t "${DOCKER_USER}/${DOCKER_REPOSITORY}:${BUILD_NUMBER}" \
             -t "${DOCKER_USER}/${DOCKER_REPOSITORY}:latest" . 
           docker push "${DOCKER_USER}/${DOCKER_REPOSITORY}:${BUILD_NUMBER}"
+          docker push "${DOCKER_USER}/${DOCKER_REPOSITORY}:latest"
