@@ -78,8 +78,17 @@ dou() {
   fi
   
   env | grep AWS_ > /tmp/aws-temp-creds 
+
+  if [ "$@" = "bash" ] ||
+    [ "$@" = "/bin/bash" ] ||
+    [ "$@" = "sh" ] ||
+    [ "$@" = "/bin/sh" ]; then
+    docker_interactivity_flags="-it"
+  else
+    docker_interactivity_flags="-i"
+  fi
   
-  docker run --rm -i \
+  docker run --rm ${docker_interactivity_flags} \
     --env-file="/tmp/aws-temp-creds" \
     -v "${HOME}/.kube:/root/.kube" \
     -e "KUBECONFIG=${KUBECONFIG/$HOME/\/root}" \
@@ -87,4 +96,28 @@ dou() {
     kickthemooon/utils \
     $@
 }
+```
+
+### Usage examples
+```
+# jq
+cat some.json | dou jq
+
+# yq
+cat some.json | dou yq
+
+# helm
+dou helm
+
+# terraform
+dou terraform
+
+# aws-cli
+dou aws
+
+# bash
+dou bash
+
+# sh
+dou bash
 ```
