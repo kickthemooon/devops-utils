@@ -19,7 +19,10 @@ jobs:
       - name: build
         run: |
           docker login -u ${DOCKER_USER} -p "${{ secrets.DOCKER_HUB }}"
-          docker build -t "${DOCKER_USER}/${DOCKER_REPOSITORY}:${BUILD_NUMBER}" \
+          docker pull "${DOCKER_USER}/${DOCKER_REPOSITORY}:latest"
+          docker build \
+            --cache-from "${DOCKER_USER}/${DOCKER_REPOSITORY}:latest" \
+            -t "${DOCKER_USER}/${DOCKER_REPOSITORY}:${BUILD_NUMBER}" \
             -t "${DOCKER_USER}/${DOCKER_REPOSITORY}:latest" . 
           docker push "${DOCKER_USER}/${DOCKER_REPOSITORY}:${BUILD_NUMBER}"
           docker push "${DOCKER_USER}/${DOCKER_REPOSITORY}:latest"
