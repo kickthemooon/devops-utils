@@ -77,17 +77,20 @@ dou() {
     KUBECONFIG="/root/.kube/config"
   fi
   
+  # write aws env variables to a file
   env | grep AWS_ > /tmp/aws-temp-creds 
 
+  # use -it if intent bash or sh
   docker_interactivity_flags="-i"
-  
-  if [ "$@" = "bash" ] ||
-    [ "$@" = "/bin/bash" ] ||
-    [ "$@" = "sh" ] ||
-    [ "$@" = "/bin/sh" ]; then
-    docker_interactivity_flags="-it" 
+  arguments="${@}"
+  if [ "${arguments}" = "bash" ] ||
+    [ "${arguments}" = "/bin/bash" ] ||
+    [ "${arguments}" = "sh" ] ||
+    [ "${arguments}" = "/bin/sh" ]; then
+    docker_interactivity_flags="-it"  
   fi
   
+  # run the image with the command
   docker run --rm ${docker_interactivity_flags} \
     --env-file="/tmp/aws-temp-creds" \
     -v "${HOME}/.kube:/root/.kube" \
@@ -96,6 +99,7 @@ dou() {
     kickthemooon/utils \
     $@
 }
+
 ```
 
 ### Usage examples
