@@ -3,7 +3,7 @@ name: build
 env:
   BUILD_NUMBER: ${{github.run_number}}
   DOCKER_USER: kickthemooon
-  DOCKER_REPOSITORY: utils
+  DOCKER_REPOSITORY: devops-utils
 
 on:
   push:
