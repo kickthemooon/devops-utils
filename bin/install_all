@@ -1,0 +1,37 @@
+#!/bin/sh
+err() { echo "[ERROR]: $*" >&2 ; }
+
+versions_path="${HOME}/versions.yaml"
+
+# loop through available tools
+for tool_name in $(cat "${versions_path}" | inityq r - "tools[*].name"); do
+  echo "installing ${tool_name}"
+  installation_path="${HOME}/tools/${tool_name}"
+  if [ ! -d "${installation_path}" ]; then
+    mkdir -p "${installation_path}"
+  fi
+  use_command="$(cat "${versions_path}" | inityq r - "tools.(name==${tool_name}).use_command")"
+  for version in $(cat "${versions_path}" | inityq r - "tools.(name==${tool_name}).versions[*].version"); do
+    single_install \
+      --name "${tool_name}" \
+      --version "${version}"
+    install_exit_code="${?}"
+    if [ "${install_exit_code}" != "0" ]; then
+      err "something went wrong installing ${tool_name} version ${version}"
+      exit 1
+    fi
+    # use latest as default
+    if [ "${version}" = "$(cat "${versions_path}" | inityq r - "tools.(name==${tool_name}).versions[*].version" | sort | tail -n 1)" ]; then
+      if [ -n "${use_command}" ]; then
+        ${use_command} "${version}"
+        use_exit_code="${?}"
+        if [ "${use_exit_code}" != "0" ]; then
+          err "something went wrong setting version ${version} as default for ${tool_name}"
+          exit 1
+        fi
+      else
+        cp "${installation_path}/${version}" "/usr/local/bin/${tool_name}"
+      fi
+    fi
+  done
+done

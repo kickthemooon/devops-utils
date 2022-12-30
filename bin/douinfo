@@ -1,0 +1,11 @@
+#!/bin/sh
+err() { echo "[ERROR]: $*" >&2 ; }
+
+versions_path="${HOME}/versions.yaml"
+
+for tool_name in $(cat "${versions_path}" | inityq r - "tools[*].name"); do
+  echo
+  echo "${tool_name}:"
+  cat "${versions_path}" | inityq r - "tools.(name==${tool_name}).versions[*].version"
+  echo "------------------"
+done

@@ -1,0 +1,79 @@
+#!/bin/sh
+err() { echo "[ERROR]: $*" >&2 ; }
+cd "${0%/*}"
+this_path="$(pwd)"
+
+versions_path="${HOME}/versions.yaml"
+
+unknown_inputs=()
+while [ $# -gt 0 ]; do
+  case $1 in
+    --name)
+      name="$2"
+      shift 2 ;;
+    --version)
+      version="$2"
+      shift 2 ;;
+    --prefix)
+      prefix="$2"
+      shift 2 ;;
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      unknown_inputs+=("$1")
+      shift ;;
+  esac
+done
+
+installation_path="${HOME}/tools/${name}"
+if [ ! -d "${installation_path}" ]; then
+  mkdir -p "${installation_path}"
+fi
+
+link_template="$(cat "${versions_path}" | inityq r - "tools.(name==${name}).link_template")"
+install_command="$(cat "${versions_path}" | inityq r - "tools.(name==${name}).install_command")"
+use_command="$(cat "${versions_path}" | inityq r - "tools.(name==${name}).use_command")"
+
+if [ -z "${prefix}" ]; then
+  prefix="$(cat "${versions_path}" | inityq r - "tools.(name==${name}).versions.(version==${version}).prefix")"
+fi
+link="$(echo "${link_template}" | sed "s|VERSION|${prefix}${version}|g" | sed "s|NAME|${name}|g")"
+
+if [ -n "$(echo "${link}" | grep "tar.gz$")"  ]; then
+  # install from tar.gz
+  curl -L "${link}" -o "${version}.tar.gz"
+  download_exit_code="${?}"
+  if [ "${download_exit_code}" != "0" ]; then
+    err "could not download archive: ${link}"
+    exit 1
+  fi
+  mkdir "./${version}"
+  tar -zxvf "${version}.tar.gz" -C "./${version}"
+  executable_path="$(find ./${version}/ -type f -executable -print | grep "${name}")"
+  if [ -z "${executable_path}" ]; then
+    err "could not find executable in archive"
+    exit 1
+  fi
+  chmod +x "${executable_path}"
+  mv "${executable_path}" "${installation_path}/${version}"
+  rm -rf ./${version} ${version}.tar.gz
+elif [ -n "${install_command}" ]; then
+  # install from command
+  ${install_command} "${version}"
+  install_command_exit_code="${?}"
+  if [ "${install_command_exit_code}" != "0" ]; then
+    err "something went wrong executing install command '${install_command}'"
+    exit 1
+  fi
+else
+  # install from direct download
+  curl -L "${link}" -o "${installation_path}/${version}"
+  download_exit_code="${?}"
+  if [ "${download_exit_code}" != "0" ]; then
+    err "could not download: ${link}"
+    exit 1
+  fi
+  chmod +x "${installation_path}/${version}"
+fi

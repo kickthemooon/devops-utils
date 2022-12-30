@@ -1,0 +1,42 @@
+tools:
+  - name: kubectl
+    link_template: "https://storage.googleapis.com/kubernetes-release/release/vVERSION/bin/linux/amd64/kubectl"
+    versions:
+      - version: 1.23.15
+      - version: 1.26.0
+      - version: 1.24.9
+      - version: 1.25.5
+  - name: helm
+    link_template: "https://get.helm.sh/helm-vVERSION-linux-amd64.tar.gz"
+    versions:
+      - version: 3.10.3
+      - version: 2.14.3
+  - name: jq
+    link_template: "https://github.com/stedolan/jq/releases/download/jq-VERSION/jq-linux64"
+    versions:
+      - version: 1.6
+  - name: yq
+    link_template: "https://github.com/mikefarah/yq/releases/download/VERSION/yq_linux_amd64"
+    versions:
+      - version: 4.30.4
+        prefix: "v"
+      - version: 3.4.1
+  - name: hclq
+    link_template: "https://github.com/mattolenik/hclq/releases/download/VERSION/hclq-linux-amd64"
+    versions:
+      - version: 0.5.3
+  - name: terraform
+    install_command: "tfenv install"
+    use_command: "tfenv use"
+    versions:
+      - version: 1.3.6
+      - version: 0.15.5
+      - version: 0.14.11
+  - name: kubectx
+    link_template: "https://github.com/ahmetb/kubectx/releases/download/vVERSION/kubectx_vVERSION_linux_x86_64.tar.gz"
+    versions:
+      - version: 0.9.4
+  - name: kubens
+    link_template: "https://github.com/ahmetb/kubectx/releases/download/vVERSION/kubens_vVERSION_linux_x86_64.tar.gz"
+    versions:
+      - version: 0.9.4

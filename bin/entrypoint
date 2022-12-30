@@ -1,0 +1,44 @@
+#!/bin/sh
+err() { echo "[ERROR]: $*" >&2 ; }
+
+versions_path="${HOME}/versions.yaml"
+installation_path="${HOME}/tools"
+
+# loop through available tools
+for tool_name in $(cat "${versions_path}" | inityq r - "tools[*].name"); do
+  # transform tool name to uppercase
+  tool_name_upper="$(echo "${tool_name}" | awk '{ print toupper($0) }')"
+  # search for version in env variables
+  env_var_match="$(env | awk -F "=" '{ print $1 }' | grep "^DOU_VERSION_${tool_name_upper}$")"
+  if [ -n "${env_var_match}" ]; then
+    # extract env variable value
+    env_var_value="$(env | grep "^DOU_VERSION_${tool_name_upper}=" | awk -F "=" '{ print $2 }' | sed 's|"||g')"
+    # search for installed versions
+    matched_version="$(cat "${versions_path}" | inityq r - "tools.(name==${tool_name}).versions[*].version" | sort | grep "^${env_var_value}" | tail -n 1)"
+
+    if [ -z "${matched_version}" ]; then
+      # install missing version
+      single_install --name "${tool_name}" --version "${env_var_value}"
+      install_exit_code="${?}"
+      if [ "${install_exit_code}" != "0" ]; then
+          err "could not install ${tool_name} version ${env_var_value}"
+          exit 1
+      fi
+    fi
+
+    # use version
+    use_command="$(cat "${versions_path}" | inityq r - "tools.(name==${tool_name}).use_command")"
+    if [ -n "${use_command}" ]; then
+      ${use_command} "${env_var_value}"
+      use_exit_code="${?}"
+      if [ "${use_exit_code}" != "0" ]; then
+        err "something went wrong setting version ${env_var_value} as default for ${tool_name}"
+        exit 1
+      fi
+    else
+      cp "${installation_path}/${tool_name}/${env_var_value}" "/usr/local/bin/${tool_name}"
+    fi
+  fi
+done
+
+$@

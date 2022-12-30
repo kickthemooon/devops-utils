@@ -1,85 +1,41 @@
 # Common DevOps utilities in a docker image
 
-## What's inside
+## What's inside (default versions)
 
-- AWS CLI
-- Terraform
-- Kubectl
-- Helm
-- JQ
-- YQ
-
-Versions are defined as ARG's in the Dockerfile
+- [AWS CLI](https://aws.amazon.com/cli/)
+- [Terraform (tfenv)](https://www.terraform.io/)
+- [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/)
+- [kubectx](https://github.com/ahmetb/kubectx/)
+- [kubens](https://github.com/ahmetb/kubectx/)
+- [Helm](https://helm.sh/)
+- [JQ](https://stedolan.github.io/jq/)
+- [YQ](https://github.com/mikefarah/yq)
+- [HCLQ](https://hclq.sh/)
 
 ## How to use it
 
-### AWS CLI
-- Pass AWS credentials via the .aws directory
-```
-_> docker run --rm -i \
-     -v "$(pwd):/workspace" \
-     -v "${HOME}/.aws:/root/.aws" \
-     kickthemooon/utils \
-     aws s3 ls
-```
-- Pass temporary AWS credentials as env variables
-```
-_> env | grep AWS_ > /tmp/aws-temp-creds && \
-   docker run --rm -i \
-     -v "$(pwd):/workspace" \
-     --env-file="/tmp/aws-temp-creds" \
-     kickthemooon/utils \
-     aws s3 ls 
-```
+### Add a shortcut
 
-### Kubectl
-- Pass a kubernetes configuration via .kube
-```
-_> docker run --rm -i \
-     -v "$(pwd):/workspace" \
-     -v "${HOME}/.kube:/root/.kube" \
-     kickthemooon/utils \
-     kubectl
-```
-- Specify a kube config file
-```
-_> KUBECONFIG="$HOME/.kube/my-kube-config-file" docker run --rm -i \
-     -v "$(pwd):/workspace" \
-     -v "${HOME}/.kube:/root/.kube" \
-     -e "KUBECONFIG=${KUBECONFIG/$HOME/\/root}" \
-     kickthemooon/utils \
-     kubectl
-```
-
-### Helm, JQ and YQ
-Helm, JQ and YQ are ready to use without any configuration e.g.:
-```
-docker run --rm -i kickthemooon/utils jq
-```
-
-## Add a shortcut
+For a shortcut we need to consider aws and kubernetes credentials.  
 To avoid typing all that stuff every time, we can add a shell function to our profile:
 ```
 # devops utils
 dou() {
-  # create .kube 
-  if [ ! -d "$HOME/.kube" ]; then
-    mkdir -p $HOME/.kube
+  local kube_config_dir="${HOME}/.dou/kube"
+  local aws_config_dir="${HOME}/.dou/aws"
+  
+  # create kube config dir 
+  if [ ! -d "${kube_config_dir}" ]; then
+    mkdir -p "${kube_config_dir}"
   fi
   
-  # create .kube/config
-  if [ ! -f "$HOME/.kube/config" ]; then
-    touch $HOME/.kube/config
+  # create aws config dir 
+  if [ ! -d "${aws_config_dir}" ]; then
+    mkdir -p "${aws_config_dir}"
   fi
   
-  # adjust KUBECONFIG
-  if [ -z "${KUBECONFIG}" ]; then
-    KUBECONFIG="/root/.kube/config"
-  fi
+  env | grep "DOU_VERSION" > "${HOME}/.dou/versions.env"
   
-  # write aws env variables to a file
-  env | grep AWS_ > /tmp/aws-temp-creds 
-
   # use -it if intent bash or sh
   docker_interactivity_flags="-i"
   arguments="${@}"
@@ -92,14 +48,34 @@ dou() {
   
   # run the image with the command
   docker run --rm ${docker_interactivity_flags} \
-    --env-file="/tmp/aws-temp-creds" \
-    -v "${HOME}/.kube:/root/.kube" \
-    -e "KUBECONFIG=${KUBECONFIG/$HOME/\/root}" \
+    --env-file "${HOME}/.dou/versions.env" \
+    -v "${HOME}/.dou/kube:/root/.kube" \
+    -v "${HOME}/.dou/aws:/root/.aws" \
     -v "$(pwd):/workspace" \
-    kickthemooon/utils \
+    kickthemooon/utils:test \
     $@
 }
 
+```
+
+Running this shortcut function creates a configuration directory under:  
+```
+$HOME/.dou
+```
+This is used for configuration files of aws, kubectl and others
+
+### Versions
+
+To see installed versions for each tool run:
+```
+_> dou douinfo
+```
+
+### Change versions
+
+You can change versions by using env variables (`DOU_VERSION_[TOOL_NAME]`):
+```
+_> DOU_VERSION_KUBECTL="1.15.3" dou kubectl version --client
 ```
 
 ### Usage examples
@@ -121,7 +97,3 @@ dou aws
 
 # bash
 dou bash
-
-# sh
-dou bash
-```
