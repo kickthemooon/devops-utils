@@ -52,7 +52,7 @@ dou() {
     -v "${HOME}/.dou/kube:/root/.kube" \
     -v "${HOME}/.dou/aws:/root/.aws" \
     -v "$(pwd):/workspace" \
-    kickthemooon/utils:test \
+    kickthemooon/utils \
     $@
 }
 
