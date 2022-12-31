@@ -75,7 +75,7 @@ _> dou douinfo
 
 You can change versions by using env variables (`DOU_VERSION_[TOOL_NAME]`):
 ```
-_> DOU_VERSION_KUBECTL="1.15.3" dou kubectl version --client
+_> DOU_VERSION_TERRAFORM="1.15.3" dou terraform version
 ```
 
 ### Usage examples
