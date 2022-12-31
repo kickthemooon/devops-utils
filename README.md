@@ -1,6 +1,6 @@
 # Common DevOps utilities in a docker image
 
-## What's inside (default versions)
+## What's inside
 
 - [AWS CLI](https://aws.amazon.com/cli/)
 - [Terraform (tfenv)](https://www.terraform.io/)
@@ -70,6 +70,7 @@ To see installed versions for each tool run:
 ```
 _> dou douinfo
 ```
+By default the highest versions are used.
 
 ### Change versions
 
