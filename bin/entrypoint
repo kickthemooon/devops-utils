@@ -16,8 +16,8 @@ for tool_name in $(cat "${versions_path}" | inityq r - "tools[*].name"); do
     # search for installed versions
     matched_version="$(cat "${versions_path}" | inityq r - "tools.(name==${tool_name}).versions[*].version" | sort | grep "^${env_var_value}" | tail -n 1)"
 
+    # install missing version if not present
     if [ -z "${matched_version}" ]; then
-      # install missing version
       single_install --name "${tool_name}" --version "${env_var_value}"
       install_exit_code="${?}"
       if [ "${install_exit_code}" != "0" ]; then

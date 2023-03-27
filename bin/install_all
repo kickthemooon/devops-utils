@@ -17,8 +17,16 @@ for tool_name in $(cat "${versions_path}" | inityq r - "tools[*].name"); do
       --version "${version}"
     install_exit_code="${?}"
     if [ "${install_exit_code}" != "0" ]; then
-      err "something went wrong installing ${tool_name} version ${version}"
-      exit 1
+      err "something went wrong installing ${tool_name} version ${version}. retrying after 5s ..."
+      sleep 5
+      single_install \
+        --name "${tool_name}" \
+        --version "${version}"
+      install_exit_code="${?}"
+      if [ "${install_exit_code}" != "0" ]; then
+        err "retry failed for ${tool_name} version ${version}. exiting ..."
+        exit 1
+      fi
     fi
     # use latest as default
     if [ "${version}" = "$(cat "${versions_path}" | inityq r - "tools.(name==${tool_name}).versions[*].version" | sort | tail -n 1)" ]; then

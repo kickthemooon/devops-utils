@@ -7,6 +7,7 @@
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/)
 - [kubectx](https://github.com/ahmetb/kubectx/)
 - [kubens](https://github.com/ahmetb/kubectx/)
+- [kubeconform](https://github.com/yannh/kubeconform)
 - [Helm](https://helm.sh/)
 - [JQ](https://stedolan.github.io/jq/)
 - [YQ](https://github.com/mikefarah/yq)
@@ -34,7 +35,7 @@ dou() {
     mkdir -p "${aws_config_dir}"
   fi
   
-  env | grep "DOU_VERSION" > "${HOME}/.dou/versions.env"
+  env | grep "DOU_VERSION_" > "${HOME}/.dou/versions.env"
   
   # use -it if intent bash or sh
   docker_interactivity_flags="-i"
@@ -68,7 +69,7 @@ This is used for configuration files of aws, kubectl and others
 
 To see installed versions for each tool run:
 ```
-_> dou douinfo
+_> dou info
 ```
 
 ### Change versions
@@ -97,3 +98,6 @@ dou aws
 
 # bash
 dou bash
+
+# helm / kubernetes validation
+dou helm template app ./chart | dou kubeconform

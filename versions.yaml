@@ -10,7 +10,6 @@ tools:
     link_template: "https://get.helm.sh/helm-vVERSION-linux-amd64.tar.gz"
     versions:
       - version: 3.10.3
-      - version: 2.14.3
   - name: jq
     link_template: "https://github.com/stedolan/jq/releases/download/jq-VERSION/jq-linux64"
     versions:
@@ -40,3 +39,7 @@ tools:
     link_template: "https://github.com/ahmetb/kubectx/releases/download/vVERSION/kubens_vVERSION_linux_x86_64.tar.gz"
     versions:
       - version: 0.9.4
+  - name: kubeconform
+    link_template: "https://github.com/yannh/kubeconform/releases/download/vVERSION/kubeconform-linux-amd64.tar.gz"
+    versions:
+      - version: 0.6.1
