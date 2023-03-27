@@ -1,6 +1,6 @@
 # Common DevOps utilities in a docker image
 
-## What's inside (default versions)
+## What's inside
 
 - [AWS CLI](https://aws.amazon.com/cli/)
 - [Terraform (tfenv)](https://www.terraform.io/)
@@ -53,7 +53,7 @@ dou() {
     -v "${HOME}/.dou/kube:/root/.kube" \
     -v "${HOME}/.dou/aws:/root/.aws" \
     -v "$(pwd):/workspace" \
-    kickthemooon/utils:test \
+    kickthemooon/utils \
     $@
 }
 
@@ -71,6 +71,7 @@ To see installed versions for each tool run:
 ```
 _> dou info
 ```
+By default the highest versions are used.
 
 ### Change versions
 
