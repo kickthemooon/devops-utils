@@ -53,7 +53,7 @@ dou() {
     -v "${HOME}/.dou/kube:/root/.kube" \
     -v "${HOME}/.dou/aws:/root/.aws" \
     -v "$(pwd):/workspace" \
-    kickthemooon/utils \
+    kickthemooon/devops-utils \
     $@
 }
 
@@ -71,7 +71,8 @@ To see installed versions for each tool run:
 ```
 _> dou info
 ```
-By default the highest versions are used.
+By default, the highest versions are used.  
+You can also take a look at [versions.yaml](versions.yaml).
 
 ### Change versions
 
