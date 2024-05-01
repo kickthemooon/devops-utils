@@ -69,7 +69,7 @@ This is used for configuration files of aws, kubectl and others
 
 To see installed versions for each tool run:
 ```
-_> dou info
+dou info
 ```
 By default, the highest versions are used.  
 You can also take a look at [versions.yaml](versions.yaml).
@@ -78,7 +78,7 @@ You can also take a look at [versions.yaml](versions.yaml).
 
 You can change versions by using env variables (`DOU_VERSION_[TOOL_NAME]`):
 ```
-_> DOU_VERSION_KUBECTL="1.15.3" dou kubectl version --client
+DOU_VERSION_KUBECTL="1.15.3" dou kubectl version --client
 ```
 
 ### Usage examples
